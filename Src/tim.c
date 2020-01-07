@@ -142,8 +142,6 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 
-
-
 	if (htim->Instance == TIM4) 
 	{
 		HAL_IncTick();  //HAL库内部延时用

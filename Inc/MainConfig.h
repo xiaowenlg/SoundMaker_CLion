@@ -7,7 +7,7 @@
 #define _MAINCONFIG_H_
 #include "stdint.h"
 #include "stm32f1xx_hal.h"
-#include "system.h"
+//#include "system.h"
 #define REED_Pin GPIO_PIN_0   //干簧管引脚
 #define REED_GPIO_Port GPIOA
 #define REED_EXTI_IRQn EXTI0_IRQn
@@ -123,6 +123,11 @@ extern uint16_t TempCount;
 #define UART_BAND_1				57600         //蓝牙串口
 #define UART_BAND_2				115200        //调试用串口
 #define UART_BAND_3				9600		  //HML串口屏(淘晶驰)
+#define TESTLEN                 12            //密码长度
+#define TEST_P                  "cao-xiao-wen"
+
+//Flash 地址
+#define PASS_ADRESS            EEPROM_BEGIN_ADRR+32           //密码存储地址
 typedef struct SportInfo      //运动信息
 {
 	uint16_t count;//运动次数

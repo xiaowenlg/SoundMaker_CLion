@@ -25,6 +25,9 @@
 #include "cmsis_os.h"
 #include "usart.h"
 #include "stmflash.h"
+#include "MainConfig.h"
+#include "pass.h"
+#include "string.h"
 osThreadId StartTaskHandle;
 osThreadId MessageTank;
 osThreadId myTask03Handle;
@@ -43,7 +46,11 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* Pre/Post sleep processing prototypes */
 void PreSleepProcessing(uint32_t *ulExpectedIdleTime);
 void PostSleepProcessing(uint32_t *ulExpectedIdleTime);
-
+const uint8_t TEXT_Buffer[]={"STM32F103 FLASH TEST"};
+#define SIZE sizeof(TEXT_Buffer)
+uint8_t datatemp[SIZE]={0};
+uint8_t eeprom_pass[TESTLEN] = {0};
+uint8_t wrcount[0] = {0};
 /* Hook prototypes */
 void vApplicationIdleHook(void);
 
@@ -102,8 +109,32 @@ void App_Init()
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
-
-
+    uint8_t decount = 0;
+    uint8_t *temppass;
+    STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+    datatemp[0] = datatemp[0]+1;
+   // STMFLASH_Write(EEPROM_BEGIN_ADRR+32,(uint16_t *)TEST_P,TESTLEN);
+    STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
+   //temppass = GetPassWord(Get_ChipID(),TESTLEN);
+   Uart_printf(&huart1,"eeprom_pass:%s\r\n",eeprom_pass);
+   /* while(1)     //判断运行次数
+    {
+        if(datatemp[0]<10){
+            osDelay(100);
+            STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+            break;
+        }
+        else{
+            STMFLASH_Read(EEPROM_BEGIN_ADRR+32,(uint16_t *)eeprom_pass,TESTLEN/2);
+           if(strcmp(TEST_P,eeprom_pass)==0)
+           {
+               Uart_printf(&huart1,"The Same to EEPROM\r\n");
+               datatemp[0] = 0;
+               STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+               break;
+           }
+        }
+    }*/
     taskENTER_CRITICAL();
     App_Init();
     vTaskDelete(StartTaskHandle);
@@ -124,14 +155,10 @@ void MessageHandler(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    Uart_printf(&huart1,"Task2");
-
-    osDelay(50);
-
+      Uart_printf(&huart1,"Data:%d\r\n",datatemp[0]);
+      Uart_printf(&huart1,"eeprompass:%s",eeprom_pass);
       HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_1);
-
       osDelay(500);
-
 
   }
   /* USER CODE END StartTask02 */
@@ -150,7 +177,7 @@ void StartTask03(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-      Uart_printf(&huart1,"Task3");
+      //Uart_printf(&huart1,"Task3");
     osDelay(100);
   }
   /* USER CODE END StartTask03 */
