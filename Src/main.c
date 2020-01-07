@@ -65,7 +65,7 @@ int main(void)
 
   SystemClock_Config();
 
-  HAL_Delay(100);//////////////////////////////不知道什么原因这里必须延时，否则任务不启动
+  HAL_Delay(500);//////////////////////////////不知道什么原因这里必须延时，否则任务不启动
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART3_UART_Init(UART_BAND_1);

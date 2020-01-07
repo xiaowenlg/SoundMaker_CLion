@@ -114,10 +114,10 @@ extern uint16_t SportCount;        //运动计次
 extern uint16_t TempCount;
 //上传数据信息
 #define SERIALDATLEN			20				//上传数据长度
-#define BLE_UART				&huart1         //蓝牙串口设备接口
+#define BLE_UART				&huart2         //蓝牙串口设备接口
 
 
-#define DEBUG_UART				&huart2			//调试串口接口
+#define DEBUG_UART				&huart1			//调试串口接口
 
 //设备串口波特率设置
 #define UART_BAND_1				115200         //蓝牙串口
@@ -128,6 +128,7 @@ extern uint16_t TempCount;
 #define TEST_USECOUNT           10                          //在没有密码的情况下允许使用的次数
 //Flash 地址
 #define PASS_ADRESS            EEPROM_BEGIN_ADRR+32           //密码存储地址
+#define BLE_ADRESS             EEPROM_BEGIN_ADRR+64           //蓝牙存储地址
 typedef struct SportInfo      //运动信息
 {
 	uint16_t count;//运动次数

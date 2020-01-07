@@ -22,6 +22,7 @@
 #ifndef __STM32F1xx_IT_H
 #define __STM32F1xx_IT_H
 
+#include "stdint.h"
 #ifdef __cplusplus
  extern "C" {
 #endif 
@@ -61,7 +62,19 @@ void USART1_IRQHandler(void);
 void USART2_IRQHandler(void);
 void USART3_IRQHandler(void);
 /* USER CODE BEGIN EFP */
+//串口1变量
+extern uint8_t ReceData[256];//接收数据缓冲区
+extern _Bool ReceOver;//接收完毕标志
+extern  uint8_t DataLen;
+/* USER CODE END EFP */
+//串口2变量
+extern uint8_t Usart2_Data[256];//接收数据缓冲区
+extern _Bool Usart2_Over;//接收完毕标志
+extern  uint8_t Usart2_DataLen;
 
+extern uint8_t Usart3_Data[256];//接收数据缓冲区
+extern _Bool Usart3_Over;//接收完毕标志
+extern  uint8_t Usart3_DataLen;
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

@@ -48,3 +48,38 @@ uint8_t arrcamp(uint8_t *arr1,uint8_t *arr2,uint8_t len)            //判断两�
     }
     return 0;
 }
+
+int insertArray(uint8_t *arr, uint16_t arrlen, uint8_t *inarr, uint16_t inarrlen,uint16_t pos)
+{
+    int res = -2;
+    uint16_t i = 0;
+    if ((arrlen + inarrlen) < 65536)
+    {
+        //memcpy(&buf_date[bufdateIndex], resdate, resdatelen);
+        memcpy(&arr[pos + inarrlen], &arr[pos], arrlen - pos + 1);//数组从pos后，后移inarrlen位
+        memcpy(&arr[pos], inarr, inarrlen);
+
+        res = arrlen + inarrlen;
+    }
+    else
+        res = -1;
+    return res;
+}
+//插入一个字符
+int insertOneByte(uint8_t *arr, uint16_t arrlen, uint8_t indata, uint16_t pos)
+{
+    int res = -2;
+    int i = 0;
+    if ((arrlen + 1) < 65536)
+    {
+        for (i = arrlen; i >= pos; i--)
+        {
+            arr[i + 1] = arr[i];
+        }
+        arr[pos] = indata;
+        res = arrlen + 1;
+    }
+    else
+        res = -1;
+    return res;
+}

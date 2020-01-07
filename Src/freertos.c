@@ -28,6 +28,7 @@
 #include "MainConfig.h"
 #include "pass.h"
 #include "string.h"
+#include "stm32f1xx_it.h"
 osThreadId StartTaskHandle;
 osThreadId MessageTank;
 osThreadId myTask03Handle;
@@ -52,6 +53,18 @@ uint8_t datatemp[SIZE]={0};
 uint8_t eeprom_pass[TESTLEN] = {0};
 uint8_t wrcount[0] = {0};
 uint8_t  texstr[TESTLEN] = TEST_P;
+uint8_t  eeprom_Ble_addr[READLEN] = {0};//蓝牙地址
+uint8_t endflg[8] = { "-N" };	//结尾标志
+uint8_t readflg[8] = {0};		//读到的标志位
+
+uint8_t str[4] = { 0 };
+uint8_t str1[4] = "MAC";
+uint8_t adr_MAC[MAC_LENGTH] = { 0 };
+
+uint8_t recount = 0;//记录接收次数
+
+//串口接收参数
+
 /* Hook prototypes */
 void vApplicationIdleHook(void);
 
@@ -141,11 +154,71 @@ void StartDefaultTask(void const * argument)
                {
                    //等待蓝牙信息
                }
-
-
            }
         }
     }
+
+    //取蓝牙地址
+    STMFLASH_Read(BLE_ADRESS , (uint16_t *)eeprom_Ble_addr, MAC_LENGTH/2+1);//先读一次
+
+    memset(readflg, 0, 6);
+    memcpy(readflg, &eeprom_Ble_addr[17], 2);
+    if(strcmp(endflg,readflg)==0)
+    {
+        Uart_printf(DEBUG_UART,"The Same=====!");
+        memset(adr_MAC, 0, MAC_LENGTH);
+        memcpy(adr_MAC, &eeprom_Ble_addr[0], 17);//取内存中的蓝牙地址
+    } else
+    {
+        Uart_printf(DEBUG_UART, "\r\nNo Same");
+      osDelay(500);//等待蓝牙稳定
+        MY_USART_chars(BLE_UART, "+++a");
+       // MY_USART_chars(BLE_UART, "AT+ENTM\r\n");
+        while (1)
+        {
+
+            if (Usart2_Over == 1)
+            {
+                recount++;
+                Usart2_Over = 0;
+                Uart_printf(&huart1,Usart2_Data);
+               // MY_USART_chars(BLE_UART, "AT+MAC?\r\n");
+               if (recount>=2)
+                {
+                   memset(str, 0, 4);
+                    memcpy(str, &Usart2_Data[3], 3);
+                    Uart_printf(&huart1,str);
+                    if (strcmp(str1, str) == 0)
+                    {
+
+                        MY_USART_chars(BLE_UART, "AT+ENTM\r\n");
+                        memset(adr_MAC, 0, MAC_LENGTH);
+                        memcpy(adr_MAC, &Usart2_Data[7], Usart2_DataLen - 12);//取蓝牙地址
+
+                        for (int i = 1; i < 6; i++)							//蓝牙地址中插入":"
+                        {
+                            if (i == 1)
+                                insertOneByte(adr_MAC, MAC_LENGTH, ':', i * 2);
+                            else
+                                insertOneByte(adr_MAC, MAC_LENGTH, ':', i * 2 + (i - 1));
+
+                        }
+                        insertArray(adr_MAC, MAC_LENGTH - 2, "-N", 2, MAC_LENGTH-2);
+                       // STMFLASH_Write(BLE_ADRESS, (uint16_t *)adr_MAC, MAC_LENGTH);            //把蓝牙地址写入内存
+                        //Uart_printf(&huart1, "addr:%s", adr_MAC);//-------------------------------------------------------
+                        break; //推出while循环
+                    }
+                    memset(Usart2_Data, 0, Usart2_DataLen);
+
+                }
+                else
+                    MY_USART_chars(BLE_UART, "AT+MAC?\r\n");
+            }
+
+            osDelay(5);
+        }
+    }
+
     taskENTER_CRITICAL();
     App_Init();
     vTaskDelete(StartTaskHandle);
@@ -189,6 +262,7 @@ void StartTask03(void const * argument)
   for(;;)
   {
       //Uart_printf(&huart1,"Task3");
+      HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_2);
     osDelay(100);
   }
   /* USER CODE END StartTask03 */
