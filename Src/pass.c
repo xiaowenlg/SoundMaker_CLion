@@ -13,7 +13,7 @@ uint8_t *GetPassWord(uint8_t *chipid,uint8_t len)
     return  res;   // 返回数组指针
 }
 
-uint8_t *Get_ChipID(void)
+uint8_t *Get_ChipID(void)           //读取芯片ID
 {
 
     uint32_t ChipUniqueID[3];
