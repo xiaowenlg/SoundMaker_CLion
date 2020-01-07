@@ -49,7 +49,7 @@
 
 /* USER CODE END Variables */
 osThreadId StartTaskHandle;
-osThreadId ledtankHandle;
+osThreadId MessageTank;
 osThreadId myTask03Handle;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,7 +58,7 @@ osThreadId myTask03Handle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
+void MessageHandler(void const * argument);  //消息处理任务
 void StartTask03(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -108,8 +108,8 @@ void MX_FREERTOS_Init(void) {
 }
 void App_Init()
 {
-    osThreadDef(ledtank, StartTask02, 2, 0, 128);
-    ledtankHandle = osThreadCreate(osThread(ledtank), NULL);
+    osThreadDef(messagetank, MessageHandler, 2, 0, 128);
+    MessageTank = osThreadCreate(osThread(messagetank), NULL);
 
     /* definition and creation of myTask03 */
     osThreadDef(myTask03, StartTask03,3, 0, 128);
@@ -141,7 +141,7 @@ void StartDefaultTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
+void MessageHandler(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
   /* Infinite loop */
