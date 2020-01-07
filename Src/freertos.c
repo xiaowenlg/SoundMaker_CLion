@@ -254,7 +254,6 @@ void MessageHandler(void const * argument)
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask03 */
 void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
