@@ -51,6 +51,7 @@ const uint8_t TEXT_Buffer[]={"STM32F103 FLASH TEST"};
 uint8_t datatemp[SIZE]={0};
 uint8_t eeprom_pass[TESTLEN] = {0};
 uint8_t wrcount[0] = {0};
+uint8_t  texstr[TESTLEN] = TEST_P;
 /* Hook prototypes */
 void vApplicationIdleHook(void);
 
@@ -110,31 +111,38 @@ void App_Init()
 void StartDefaultTask(void const * argument)
 {
     uint8_t decount = 0;
-    uint8_t *temppass;
+    uint8_t mmc[12]="xiaowenlg123";
+    static uint8_t *temppass;
+    uint8_t tp[TESTLEN] = {0};
     STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
     datatemp[0] = datatemp[0]+1;
-   // STMFLASH_Write(EEPROM_BEGIN_ADRR+32,(uint16_t *)TEST_P,TESTLEN);
-    STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
-   //temppass = GetPassWord(Get_ChipID(),TESTLEN);
-   Uart_printf(&huart1,"eeprom_pass:%s\r\n",eeprom_pass);
-   /* while(1)     //判断运行次数
+    temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
+   //---------------------------------------------------------------- STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);//读密码
+   /* for (int j = 0; j <TESTLEN ; ++j) {
+        Uart_printf(&huart1,"eeprom_pass:%d\r\n",eeprom_pass[j]);
+    }*/
+    while(1)     //判断运行次数
     {
-        if(datatemp[0]<10){
+        if(datatemp[0]<TEST_USECOUNT){
             osDelay(100);
             STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+            Uart_printf(&huart1,"System Run Count%d",datatemp[0]);
             break;
         }
         else{
-            STMFLASH_Read(EEPROM_BEGIN_ADRR+32,(uint16_t *)eeprom_pass,TESTLEN/2);
-           if(strcmp(TEST_P,eeprom_pass)==0)
+            STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
+           if(arrcamp(temppass,eeprom_pass,TESTLEN)==0)
            {
                Uart_printf(&huart1,"The Same to EEPROM\r\n");
                datatemp[0] = 0;
                STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
                break;
+           } else{
+               //发送ChipId到HMI屏
+               //等待蓝牙信息
            }
         }
-    }*/
+    }
     taskENTER_CRITICAL();
     App_Init();
     vTaskDelete(StartTaskHandle);
@@ -155,8 +163,8 @@ void MessageHandler(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-      Uart_printf(&huart1,"Data:%d\r\n",datatemp[0]);
-      Uart_printf(&huart1,"eeprompass:%s",eeprom_pass);
+     // Uart_printf(&huart1,"Data:%d\r\n",datatemp[0]);
+      //Uart_printf(&huart1,"eeprompass:%s",eeprom_pass);
       HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_1);
       osDelay(500);
 

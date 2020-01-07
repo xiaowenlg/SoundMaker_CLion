@@ -125,7 +125,7 @@ extern uint16_t TempCount;
 #define UART_BAND_3				9600		  //HML串口屏(淘晶驰)
 #define TESTLEN                 12            //密码长度
 #define TEST_P                  "cao-xiao-wen"
-
+#define TEST_USECOUNT           10                          //在没有密码的情况下允许使用的次数
 //Flash 地址
 #define PASS_ADRESS            EEPROM_BEGIN_ADRR+32           //密码存储地址
 typedef struct SportInfo      //运动信息
