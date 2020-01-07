@@ -141,15 +141,18 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 //************************************
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-
+    static uint16_t i = 0;
 	if (htim->Instance == TIM4) 
 	{
 		HAL_IncTick();  //HAL库内部延时用
 	}
 	if (htim->Instance == TIM2)
 	{
-
-
+	    if(i++>1000)
+        {
+	        i = 0;
+	        HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_0);
+        }
 	}
 }
 /* USER CODE BEGIN 1 */

@@ -120,9 +120,9 @@ extern uint16_t TempCount;
 #define DEBUG_UART				&huart2			//调试串口接口
 
 //设备串口波特率设置
-#define UART_BAND_1				57600         //蓝牙串口
+#define UART_BAND_1				115200         //蓝牙串口
 #define UART_BAND_2				115200        //调试用串口
-#define UART_BAND_3				9600		  //HML串口屏(淘晶驰)
+#define UART_BAND_3				115200		  //HML串口屏(淘晶驰)
 #define TESTLEN                 12            //密码长度
 #define TEST_P                  "cao-xiao-wen"
 #define TEST_USECOUNT           10                          //在没有密码的情况下允许使用的次数

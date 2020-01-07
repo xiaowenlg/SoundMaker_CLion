@@ -26,7 +26,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
+#include "MainConfig.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -57,55 +57,23 @@
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 static void MX_NVIC_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
-  
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  HAL_Delay(50);//////////////////////////////不知道什么原因这里必须延时，否则任务不启动
-
   HAL_Delay(100);//////////////////////////////不知道什么原因这里必须延时，否则任务不启动
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_USART3_UART_Init(115200);
-  MX_USART1_UART_Init(115200);
-  MX_USART2_UART_Init(115200);
+  MX_USART3_UART_Init(UART_BAND_1);
+  MX_USART1_UART_Init(UART_BAND_2);
+  MX_USART2_UART_Init(UART_BAND_3);
   MX_ADC1_Init();
   MX_TIM2_Init(1000-1);
-
+  HAL_TIM_Base_Start_IT(&htim2);
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */

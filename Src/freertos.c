@@ -117,10 +117,7 @@ void StartDefaultTask(void const * argument)
     STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
     datatemp[0] = datatemp[0]+1;
     temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
-   //---------------------------------------------------------------- STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);//读密码
-   /* for (int j = 0; j <TESTLEN ; ++j) {
-        Uart_printf(&huart1,"eeprom_pass:%d\r\n",eeprom_pass[j]);
-    }*/
+
     while(1)     //判断运行次数
     {
         if(datatemp[0]<TEST_USECOUNT){
@@ -137,9 +134,15 @@ void StartDefaultTask(void const * argument)
                datatemp[0] = 0;
                STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
                break;
-           } else{
+           }
+           else{
                //发送ChipId到HMI屏
-               //等待蓝牙信息
+               while(1)
+               {
+                   //等待蓝牙信息
+               }
+
+
            }
         }
     }
