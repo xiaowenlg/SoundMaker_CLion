@@ -48,7 +48,7 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-osThreadId defaultTaskHandle;
+osThreadId StartTaskHandle;
 osThreadId ledtankHandle;
 osThreadId myTask03Handle;
 
@@ -103,8 +103,8 @@ __weak void PostSleepProcessing(uint32_t *ulExpectedIdleTime)
   * @retval None
   */
 void MX_FREERTOS_Init(void) {
-  osThreadDef(defaultTask, StartDefaultTask, 1, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  osThreadDef(startTask, StartDefaultTask, 1, 0, 128);
+    StartTaskHandle = osThreadCreate(osThread(startTask), NULL);
 }
 void App_Init()
 {
@@ -129,7 +129,7 @@ void StartDefaultTask(void const * argument)
 
     taskENTER_CRITICAL();
     App_Init();
-    vTaskDelete(defaultTaskHandle); //É¾³ý¿ªÊ¼ÈÎÎñ
+    vTaskDelete(StartTaskHandle);
     taskEXIT_CRITICAL();
 
 }
