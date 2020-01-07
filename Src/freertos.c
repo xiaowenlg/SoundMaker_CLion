@@ -24,30 +24,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "usart.h"
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */     
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN Variables */
-
-/* USER CODE END Variables */
+#include "stmflash.h"
 osThreadId StartTaskHandle;
 osThreadId MessageTank;
 osThreadId myTask03Handle;
