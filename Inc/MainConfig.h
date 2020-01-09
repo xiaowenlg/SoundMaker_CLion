@@ -132,6 +132,7 @@ extern uint16_t TempCount;
 #define PASS_ADRESS            GETADRESS(1)          //密码存储地址
 #define BLE_ADRESS             GETADRESS(2)           //蓝牙存储地址
 
+#define SETUARTMAXLEN(n)            256*n                //串口接收最大数据长度
 typedef struct SportInfo      //运动信息
 {
 	uint16_t count;//运动次数
@@ -140,5 +141,19 @@ typedef struct SportInfo      //运动信息
 	uint16_t tim;//运动时间
 	uint8_t    playstate;//播放状态
 }Customerinfo;
-
+/*
+ * extern uint8_t ReceData[256];//接收数据缓冲区
+extern _Bool ReceOver;//接收完毕标志
+extern  uint8_t DataLen;
+ */
+/*串口接收 结构体类型*/
+typedef struct UartInfo
+{
+    _Bool   reover;             //接收完成标志
+    uint8_t datalen;            //接收到的数据长度
+    uint8_t dataIndex;          //接收数组的索引
+    UART_HandleTypeDef *uartHandl;  //串口句柄
+    void(*p)(void *v);          //数据函数
+    uint8_t redata[SETUARTMAXLEN(1)];        //接收缓冲区(数组)
+}ReceMessage;
 #endif // !_MAINCONFIG_H_

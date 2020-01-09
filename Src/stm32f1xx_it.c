@@ -79,6 +79,9 @@ uint8_t Usart3_Index = 0;
 uint8_t Usart3_Data[256];//接收数据缓冲区
 _Bool Usart3_Over;//接收完毕标志
 uint8_t Usart3_DataLen;
+
+ReceMessage uart1_rec;//接收变量
+uint8_t meDatalen = 0;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -317,6 +320,28 @@ void UART3_CallBack()
 
     __HAL_UART_CLEAR_FLAG(&huart3, UART_FLAG_TC);
 }
+void UartCallback(UART_HandleTypeDef* uartHandle,ReceMessage meRec)
+{
+    uint8_t tempData = 0;
+    uint8_t clear = clear;
+    if (__HAL_UART_GET_FLAG(uartHandle, UART_FLAG_RXNE) != RESET)
+    {
+        meRec.redata[meRec.dataIndex] = 0;
+        tempData = uartHandle->Instance->DR;	//读取接收到的数据
+        meRec.redata[meRec.dataIndex] = tempData;
+        meRec.dataIndex++;
+    }
+    else if (RESET != __HAL_UART_GET_FLAG(uartHandle, UART_FLAG_IDLE))
+    {
+
+        clear = uartHandle->Instance->SR;
+        clear = uartHandle->Instance->DR;
+        meRec.datalen = Usart3_Index;
+        meRec.dataIndex= 0;
+        meRec.reover = 1;
+        //__HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
+    }
+}
 /**
   * @brief This function handles USART1 global interrupt.
   */
@@ -325,7 +350,8 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
 
   /* USER CODE END USART1_IRQn 0 */
-    UART1_CallBack();
+   UART1_CallBack();//---------------------------------------------
+  // UartCallback(&huart1,uart1_rec);
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */

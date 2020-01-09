@@ -23,6 +23,7 @@
 #define __STM32F1xx_IT_H
 
 #include "stdint.h"
+#include "MainConfig.h"
 #ifdef __cplusplus
  extern "C" {
 #endif 
@@ -75,6 +76,8 @@ extern  uint8_t Usart2_DataLen;
 extern uint8_t Usart3_Data[256];//接收数据缓冲区
 extern _Bool Usart3_Over;//接收完毕标志
 extern  uint8_t Usart3_DataLen;
+
+extern ReceMessage uart1_rec;//接收变量
 /* USER CODE END EFP */
 
 #ifdef __cplusplus
