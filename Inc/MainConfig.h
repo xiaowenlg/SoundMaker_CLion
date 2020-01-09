@@ -127,8 +127,11 @@ extern uint16_t TempCount;
 #define TEST_P                  "cao-xiao-wen"
 #define TEST_USECOUNT           10                          //在没有密码的情况下允许使用的次数
 //Flash 地址
-#define PASS_ADRESS            EEPROM_BEGIN_ADRR+32           //密码存储地址
-#define BLE_ADRESS             EEPROM_BEGIN_ADRR+64           //蓝牙存储地址
+#define ADRLEN                 32  //自设小扇区
+#define GETADRESS(n)           EEPROM_BEGIN_ADRR+ADRLEN*n           //计数存储地址  n:第几个自设小山区（n∈Z）
+#define PASS_ADRESS            GETADRESS(1)          //密码存储地址
+#define BLE_ADRESS             GETADRESS(2)           //蓝牙存储地址
+
 typedef struct SportInfo      //运动信息
 {
 	uint16_t count;//运动次数

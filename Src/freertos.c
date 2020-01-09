@@ -141,7 +141,7 @@ void StartDefaultTask(void const * argument)
         }
         else{
             STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
-           if(arrcamp(temppass,eeprom_pass,TESTLEN)==0)
+           if(arrcamp(temppass,eeprom_pass,TESTLEN)==0)                             //判断密码是否正确
            {
                Uart_printf(&huart1,"The Same to EEPROM\r\n");
                datatemp[0] = 0;
@@ -158,7 +158,7 @@ void StartDefaultTask(void const * argument)
         }
     }
 
-    //取蓝牙地址
+    //取蓝牙地址-用来生成二维码
     STMFLASH_Read(BLE_ADRESS , (uint16_t *)eeprom_Ble_addr, MAC_LENGTH/2+1);//先读一次
 
     memset(readflg, 0, 6);
@@ -185,12 +185,11 @@ void StartDefaultTask(void const * argument)
                // MY_USART_chars(BLE_UART, "AT+MAC?\r\n");
                if (recount>=2)
                 {
-                   memset(str, 0, 4);
+                    memset(str, 0, 4);
                     memcpy(str, &Usart2_Data[3], 3);
                     Uart_printf(&huart1,str);
                     if (strcmp(str1, str) == 0)
                     {
-
                         MY_USART_chars(BLE_UART, "AT+ENTM\r\n");
                         memset(adr_MAC, 0, MAC_LENGTH);
                         memcpy(adr_MAC, &Usart2_Data[7], Usart2_DataLen - 12);//取蓝牙地址
@@ -205,7 +204,7 @@ void StartDefaultTask(void const * argument)
                         }
                         insertArray(adr_MAC, MAC_LENGTH - 2, "-N", 2, MAC_LENGTH-2);
                        // STMFLASH_Write(BLE_ADRESS, (uint16_t *)adr_MAC, MAC_LENGTH);            //把蓝牙地址写入内存
-                        //Uart_printf(&huart1, "addr:%s", adr_MAC);//-------------------------------------------------------
+                      Uart_printf(&huart1, "addr:%s", adr_MAC);//-------------------------------------------------------
                         break; //推出while循环
                     }
                     memset(Usart2_Data, 0, Usart2_DataLen);
@@ -218,7 +217,7 @@ void StartDefaultTask(void const * argument)
             osDelay(5);
         }
     }
-
+    Uart_printf(&huart1, "addr:%s", adr_MAC);
     taskENTER_CRITICAL();
     App_Init();
     vTaskDelete(StartTaskHandle);
