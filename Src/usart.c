@@ -27,7 +27,9 @@
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
-ReceMessage uart1_rec;//接收变量
+ReceMessage uart1_rec={0};//接收变量
+ReceMessage uart2_rec={0};
+ReceMessage uart3_rec={0};
 /* 互斥信号量句柄 */
 SemaphoreHandle_t xSemaphore = NULL;
 /* printf 重定向代码---------成功*/

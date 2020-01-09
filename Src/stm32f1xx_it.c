@@ -373,7 +373,8 @@ void USART2_IRQHandler(void)
   /* USER CODE BEGIN USART2_IRQn 0 */
 
   /* USER CODE END USART2_IRQn 0 */
-    UART2_CallBack();
+    //UART2_CallBack();
+    UartCallback(&huart2,&uart2_rec);
   /* USER CODE BEGIN USART2_IRQn 1 */
 
   /* USER CODE END USART2_IRQn 1 */

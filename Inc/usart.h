@@ -64,6 +64,8 @@ typedef struct UartInfo
     uint8_t redata[SETUARTMAXLEN(1)];        //接收缓冲区(数组)
 }ReceMessage;
 extern ReceMessage uart1_rec;
+extern ReceMessage uart2_rec;
+extern ReceMessage uart3_rec;
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

@@ -179,10 +179,7 @@ void StartTask03(void const * argument)
 }
 void GetSystemInfo()
 {
-    uint8_t decount = 0;
-    uint8_t mmc[12]="xiaowenlg123";
     static uint8_t *temppass;
-    uint8_t tp[TESTLEN] = {0};
     STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
     datatemp[0] = datatemp[0]+1;
     temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
@@ -233,22 +230,20 @@ void GetSystemInfo()
         while (1)
         {
 
-            if (Usart2_Over == 1)
+            if (uart2_rec.reover == 1)
             {
                 recount++;
-                Usart2_Over = 0;
-                Uart_printf(&huart1,Usart2_Data);
-                // MY_USART_chars(BLE_UART, "AT+MAC?\r\n");
+                uart2_rec.reover = 0;
                 if (recount>=2)
                 {
                     memset(str, 0, 4);
-                    memcpy(str, &Usart2_Data[3], 3);
+                    memcpy(str, &uart2_rec.redata[3], 3);
                     Uart_printf(&huart1,str);
                     if (strcmp(str1, str) == 0)
                     {
                         MY_USART_chars(BLE_UART, "AT+ENTM\r\n");
                         memset(adr_MAC, 0, MAC_LENGTH);
-                        memcpy(adr_MAC, &Usart2_Data[7], Usart2_DataLen - 12);//取蓝牙地址
+                        memcpy(adr_MAC, &uart2_rec.redata[7], uart2_rec.datalen - 12);//取蓝牙地址
 
                         for (int i = 1; i < 6; i++)							//蓝牙地址中插入":"
                         {
@@ -263,7 +258,7 @@ void GetSystemInfo()
                         Uart_printf(&huart1, "addr:%s", adr_MAC);//-------------------------------------------------------
                         break; //推出while循环
                     }
-                    memset(Usart2_Data, 0, Usart2_DataLen);
+                    memset(uart2_rec.redata, 0, uart2_rec.datalen);
 
                 }
                 else
