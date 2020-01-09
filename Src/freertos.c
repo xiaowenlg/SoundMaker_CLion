@@ -167,6 +167,11 @@ void StartTask03(void const * argument)
   for(;;)
   {
       //Uart_printf(&huart1,"Task3");
+    if (uart1_rec.reover==1)
+    {
+        uart1_rec.reover=0;
+        Uart_printf(&huart1,"uart_rec:%s\r\n",uart1_rec.redata);
+    }
       HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_2);
     osDelay(100);
   }

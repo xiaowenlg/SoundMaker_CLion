@@ -25,13 +25,16 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "FreeRTOS.h"
 #include <stdio.h>
 #include "queue.h"
 #include "semphr.h"
+
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-
+#define SETUARTMAXLEN(n)            256*n                //串口接收最大数据长度
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
@@ -51,7 +54,16 @@ HAL_StatusTypeDef MY_USART_chars(UART_HandleTypeDef *huart, uint8_t *pData);
 void sendstring(unsigned char *string, UART_HandleTypeDef *huart);
 void Uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...);
 /* USER CODE BEGIN Prototypes */
-
+typedef struct UartInfo
+{
+    _Bool   reover;             //接收完成标志
+    uint8_t datalen;            //接收到的数据长度
+    uint8_t dataIndex;          //接收数组的索引
+    UART_HandleTypeDef *uartHandl;  //串口句柄
+    void(*p)(void *v);          //数据函数
+    uint8_t redata[SETUARTMAXLEN(1)];        //接收缓冲区(数组)
+}ReceMessage;
+extern ReceMessage uart1_rec;
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
