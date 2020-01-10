@@ -187,7 +187,7 @@ void GetSystemInfo()
     datatemp[0] = datatemp[0]+1;
     temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
     //STMFLASH_Write(PASS_ADRESS,(uint16_t *)temppass,TESTLEN);   //调试时写密码到内存用
-    if(passres[0]!=1)
+    if(passres[0]!=1)               //判断是否通过密码检测，通过passres[0]=1
     {
         HMI_SetPage(HMI_UART,0);
         osDelay(20);
@@ -195,7 +195,7 @@ void GetSystemInfo()
         HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);
         osDelay(10000);
     }
-    while(1)     //判断运行次数
+    while(1)
     {
         if(datatemp[0]<TEST_USECOUNT){
             osDelay(100);
@@ -224,7 +224,7 @@ void GetSystemInfo()
                 for (int i = 0; i < 12; ++i) {
                     HMI_SetVal_n(HMI_UART,i,tempval[i]);   //发送MCU的ID号到HMI
                 }
-
+                //接收密码用
                 while(1)
                 {
                     if(uart2_rec.reover==1)
