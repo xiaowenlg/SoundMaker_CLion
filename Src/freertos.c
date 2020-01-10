@@ -222,14 +222,19 @@ void GetSystemInfo()
                 HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);*/
                tempval = Get_ChipID();
                 for (int i = 0; i < 12; ++i) {
-                    HMI_SetVal_n(HMI_UART,i,tempval[i]);
+                    HMI_SetVal_n(HMI_UART,i,tempval[i]);   //发送MCU的ID号到HMI
                 }
 
                 while(1)
                 {
+                    if(uart2_rec.reover==1)
+                    {
+                        uart2_rec.reover = 0;
+                    } else{
+                        Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
+                        osDelay(1000);
+                    }
 
-                   Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
-                   osDelay(1000);
                 }
             }
         }

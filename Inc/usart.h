@@ -34,7 +34,7 @@
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-#define SETUARTMAXLEN(n)            256*n                //串口接收最大数据长度
+#define SETUARTMAXLEN(n)            256*n                //串口接收最大数据长度(n>0且n∈Z)
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
