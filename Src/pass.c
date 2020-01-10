@@ -3,7 +3,7 @@
 #include "usart.h"
 #include "string.h"
 uint8_t tesid[TESTLEN] = TEST_P;
-uint8_t *GetPassWord(uint8_t *chipid,uint8_t len)
+uint8_t *GetPassWord(uint8_t *chipid,uint8_t len)  //异或计数密码
 {
     static uint8_t res[12];                             //必须声明成静态的
     for (int i = 0; i <len ; ++i) {

@@ -193,7 +193,7 @@ void GetSystemInfo()
         osDelay(20);
         HMI_SetPage(HMI_UART,0);
         HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);
-        osDelay(10000);
+        osDelay(WAITTIM);
     }
     while(1)
     {
@@ -232,6 +232,7 @@ void GetSystemInfo()
                         uart2_rec.reover = 0;
                     } else{
                         Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
+                        Uart_printf(HMI_UART,"g0.en=1");//蓝牙等带提示语
                         osDelay(1000);
                     }
 
