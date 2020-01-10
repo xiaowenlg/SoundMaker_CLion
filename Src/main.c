@@ -68,9 +68,9 @@ int main(void)
   HAL_Delay(500);//////////////////////////////不知道什么原因这里必须延时，否则任务不启动
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_USART3_UART_Init(UART_BAND_1);
-  MX_USART1_UART_Init(UART_BAND_2);
-  MX_USART2_UART_Init(UART_BAND_3);
+  MX_USART1_UART_Init(UART_BAND_1);
+  MX_USART2_UART_Init(UART_BAND_2);
+  MX_USART3_UART_Init(UART_BAND_3);
   MX_ADC1_Init();
   MX_TIM2_Init(1000-1);
   HAL_TIM_Base_Start_IT(&htim2);

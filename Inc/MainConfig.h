@@ -122,7 +122,7 @@ extern uint16_t TempCount;
 //设备串口波特率设置
 #define UART_BAND_1				115200         //蓝牙串口
 #define UART_BAND_2				115200        //调试用串口
-#define UART_BAND_3				115200		  //HML串口屏(淘晶驰)
+#define UART_BAND_3				9600		  //HML串口屏(淘晶驰)
 #define TESTLEN                 12            //密码长度
 #define TEST_P                  "cao-xiao-wen"
 #define TEST_USECOUNT           10                          //在没有密码的情况下允许使用的次数
@@ -131,6 +131,7 @@ extern uint16_t TempCount;
 #define GETADRESS(n)           EEPROM_BEGIN_ADRR+ADRLEN*n           //计数存储地址  n:第几个自设小山区（n∈Z）
 #define PASS_ADRESS            GETADRESS(1)          //密码存储地址
 #define BLE_ADRESS             GETADRESS(2)           //蓝牙存储地址
+#define PASS_RIGHT_ADRESS             GETADRESS(3)           //密码比较结果
 
 
 typedef struct SportInfo      //运动信息

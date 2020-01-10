@@ -29,6 +29,7 @@
 #include "pass.h"
 #include "string.h"
 #include "stm32f1xx_it.h"
+#include "HMI.h"
 osThreadId StartTaskHandle;
 osThreadId MessageTank;
 osThreadId myTask03Handle;
@@ -49,7 +50,7 @@ void PreSleepProcessing(uint32_t *ulExpectedIdleTime);
 void PostSleepProcessing(uint32_t *ulExpectedIdleTime);
 const uint8_t TEXT_Buffer[]={"STM32F103 FLASH TEST"};
 #define SIZE sizeof(TEXT_Buffer)
-uint8_t datatemp[SIZE]={0};
+uint8_t datatemp[4]={0};
 uint8_t eeprom_pass[TESTLEN] = {0};
 uint8_t wrcount[0] = {0};
 uint8_t  texstr[TESTLEN] = TEST_P;
@@ -62,7 +63,7 @@ uint8_t str1[4] = "MAC";
 uint8_t adr_MAC[MAC_LENGTH] = { 0 };
 
 uint8_t recount = 0;//记录接收次数
-
+uint8_t passres[4] = {0};
 //串口接收参数
 
 /* Hook prototypes */
@@ -124,7 +125,7 @@ void App_Init()
 void StartDefaultTask(void const * argument)
 {
     GetSystemInfo();
-    Uart_printf(&huart1, "addr:%s", adr_MAC);
+    Uart_printf(&huart1, "addr==:%s", adr_MAC);
     taskENTER_CRITICAL();
     App_Init();
     vTaskDelete(StartTaskHandle);
@@ -180,16 +181,27 @@ void StartTask03(void const * argument)
 void GetSystemInfo()
 {
     static uint8_t *temppass;
+    static uint8_t *tempval;
     STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+    STMFLASH_Read(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
     datatemp[0] = datatemp[0]+1;
     temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
-
+    //STMFLASH_Write(PASS_ADRESS,(uint16_t *)temppass,TESTLEN);   //调试时写密码到内存用
+    if(passres[0]!=1)
+    {
+        HMI_SetPage(HMI_UART,0);
+        osDelay(20);
+        HMI_SetPage(HMI_UART,0);
+        HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);
+        osDelay(10000);
+    }
     while(1)     //判断运行次数
     {
         if(datatemp[0]<TEST_USECOUNT){
             osDelay(100);
             STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
             Uart_printf(&huart1,"System Run Count%d",datatemp[0]);
+
             break;
         }
         else{
@@ -198,19 +210,31 @@ void GetSystemInfo()
             {
                 Uart_printf(&huart1,"The Same to EEPROM\r\n");
                 datatemp[0] = 0;
+                passres[0] =1;
+                STMFLASH_Write(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
                 STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
                 break;
             }
             else{
-                //发送ChipId到HMI屏
+
+            /*    HMI_SetPage(HMI_UART,0);
+                osDelay(50);
+                HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);*/
+               tempval = Get_ChipID();
+                for (int i = 0; i < 12; ++i) {
+                    HMI_SetVal_n(HMI_UART,i,tempval[i]);
+                }
+
                 while(1)
                 {
-                    //等待蓝牙信息
+
+                   Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
+                   osDelay(1000);
                 }
             }
         }
     }
-
+    HMI_SetPage(HMI_UART,1);
     //取蓝牙地址-用来生成二维码
     STMFLASH_Read(BLE_ADRESS , (uint16_t *)eeprom_Ble_addr, MAC_LENGTH/2+1);//先读一次
 
@@ -254,7 +278,7 @@ void GetSystemInfo()
 
                         }
                         insertArray(adr_MAC, MAC_LENGTH - 2, "-N", 2, MAC_LENGTH-2);
-                        // STMFLASH_Write(BLE_ADRESS, (uint16_t *)adr_MAC, MAC_LENGTH);            //把蓝牙地址写入内存
+                         STMFLASH_Write(BLE_ADRESS, (uint16_t *)adr_MAC, MAC_LENGTH);            //把蓝牙地址写入内存
                         Uart_printf(&huart1, "addr:%s", adr_MAC);//-------------------------------------------------------
                         break; //推出while循环
                     }
