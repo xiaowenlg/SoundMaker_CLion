@@ -81,6 +81,7 @@ __weak void vApplicationIdleHook( void )
    important that vApplicationIdleHook() is permitted to return to its calling
    function, because it is the responsibility of the idle task to clean up
    memory allocated by the kernel to any task that has since been deleted. */
+
 }
 /* USER CODE END 2 */
 
@@ -186,6 +187,7 @@ void GetSystemInfo()
     STMFLASH_Read(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
     datatemp[0] = datatemp[0]+1;
     temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
+
     //STMFLASH_Write(PASS_ADRESS,(uint16_t *)temppass,TESTLEN);   //调试时写密码到内存用
     if(passres[0]!=1)               //判断是否通过密码检测，通过passres[0]=1
     {
@@ -230,9 +232,16 @@ void GetSystemInfo()
                     if(uart2_rec.reover==1)
                     {
                         uart2_rec.reover = 0;
+                        Uart_printf(&huart1,uart2_rec.redata); //等待蓝牙信息
+                        STMFLASH_Write(PASS_ADRESS,(uint16_t *)uart2_rec.redata,TESTLEN);
+                        Uart_printf(BLE_UART,"TestRes");
+                        NVIC_SystemReset();//系统复位
+
                     } else{
-                        Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
+                        //Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
                         Uart_printf(HMI_UART,"g0.en=1");//蓝牙等带提示语
+                        HMI_SendEnd(HMI_UART);
+                       // Uart_printf(BLE_UART,"Testxiaoweng\r\n");
                         osDelay(1000);
                     }
 
