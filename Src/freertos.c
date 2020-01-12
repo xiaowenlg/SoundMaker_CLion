@@ -169,11 +169,12 @@ void StartTask03(void const * argument)
   for(;;)
   {
       //Uart_printf(&huart1,"Task3");
-    if (uart1_rec.reover==1)
-    {
-        uart1_rec.reover=0;
-        Uart_printf(&huart1,"uart_rec:%s\r\n",uart1_rec.redata);
-    }
+      if(uart2_rec.reover==1)
+      {
+          uart2_rec.reover = 0;
+          Uart_printf(&huart1,uart2_rec.redata); //等待蓝牙信息
+
+      }
       HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_2);
     osDelay(100);
   }
@@ -234,7 +235,7 @@ void GetSystemInfo()
                         uart2_rec.reover = 0;
                         Uart_printf(&huart1,uart2_rec.redata); //等待蓝牙信息
                         STMFLASH_Write(PASS_ADRESS,(uint16_t *)uart2_rec.redata,TESTLEN);
-                        Uart_printf(BLE_UART,"TestRes");
+                        Uart_printf(BLE_UART,"Upgrade success");
                         NVIC_SystemReset();//系统复位
 
                     } else{
