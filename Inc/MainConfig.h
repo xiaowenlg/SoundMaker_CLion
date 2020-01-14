@@ -133,7 +133,8 @@ extern uint16_t TempCount;
 #define BLE_ADRESS             GETADRESS(2)           //蓝牙存储地址
 #define PASS_RIGHT_ADRESS             GETADRESS(3)           //密码比较结果
 
-#define WAITTIM                 5000                       //剩余试用次数显示时间
+#define WAITTIM                 5000         //试用界面显示时间单位ms
+#define VERSION                 0            //版本号，0为试用，1为正常试用版
 typedef struct SportInfo      //运动信息
 {
 	uint16_t count;//运动次数

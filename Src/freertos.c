@@ -38,7 +38,8 @@ osThreadId myTask03Handle;
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
-void GetSystemInfo();//取密码，蓝牙地址信息
+void  GetBleInfo();//取密码，蓝牙地址信息
+void CheckPassWord();
 void StartDefaultTask(void const * argument);
 void MessageHandler(void const * argument);  //消息处理任务
 void StartTask03(void const * argument);
@@ -106,7 +107,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(startTask, StartDefaultTask, 1, 0, 128);
     StartTaskHandle = osThreadCreate(osThread(startTask), NULL);
 }
-void App_Init()
+void App_Init() //APP运行线程
 {
     osThreadDef(messagetank, MessageHandler, 2, 0, 128);
     MessageTank = osThreadCreate(osThread(messagetank), NULL);
@@ -125,7 +126,10 @@ void App_Init()
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
-    GetSystemInfo();
+#if VERSION==0
+    CheckPassWord();
+#endif
+    GetBleInfo();
     Uart_printf(&huart1, "addr==:%s", adr_MAC);
     taskENTER_CRITICAL();
     App_Init();
@@ -180,76 +184,9 @@ void StartTask03(void const * argument)
   }
   /* USER CODE END StartTask03 */
 }
-void GetSystemInfo()
+void GetBleInfo()
 {
-    static uint8_t *temppass;
-    static uint8_t *tempval;
-    STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
-    STMFLASH_Read(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
-    datatemp[0] = datatemp[0]+1;
-    temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
 
-    //STMFLASH_Write(PASS_ADRESS,(uint16_t *)temppass,TESTLEN);   //调试时写密码到内存用
-    if(passres[0]!=1)               //判断是否通过密码检测，通过passres[0]=1
-    {
-        HMI_SetPage(HMI_UART,0);
-        osDelay(20);
-        HMI_SetPage(HMI_UART,0);
-        HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);
-        osDelay(WAITTIM);
-    }
-    while(1)
-    {
-        if(datatemp[0]<TEST_USECOUNT){
-            osDelay(100);
-            STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
-            Uart_printf(&huart1,"System Run Count%d",datatemp[0]);
-
-            break;
-        }
-        else{
-            STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
-            if(arrcamp(temppass,eeprom_pass,TESTLEN)==0)                             //判断密码是否正确
-            {
-                Uart_printf(&huart1,"The Same to EEPROM\r\n");
-                datatemp[0] = 0;
-                passres[0] =1;
-                STMFLASH_Write(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
-                STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
-                break;
-            }
-            else{
-
-            /*    HMI_SetPage(HMI_UART,0);
-                osDelay(50);
-                HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);*/
-               tempval = Get_ChipID();
-                for (int i = 0; i < 12; ++i) {
-                    HMI_SetVal_n(HMI_UART,i,tempval[i]);   //发送MCU的ID号到HMI
-                }
-                //接收密码用
-                while(1)
-                {
-                    if(uart2_rec.reover==1)
-                    {
-                        uart2_rec.reover = 0;
-                        Uart_printf(&huart1,uart2_rec.redata); //等待蓝牙信息
-                        STMFLASH_Write(PASS_ADRESS,(uint16_t *)uart2_rec.redata,TESTLEN);
-                        Uart_printf(BLE_UART,"Upgrade success");
-                        NVIC_SystemReset();//系统复位
-
-                    } else{
-                        //Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
-                        Uart_printf(HMI_UART,"g0.en=1");//蓝牙等带提示语
-                        HMI_SendEnd(HMI_UART);
-                       // Uart_printf(BLE_UART,"Testxiaoweng\r\n");
-                        osDelay(1000);
-                    }
-
-                }
-            }
-        }
-    }
     HMI_SetPage(HMI_UART,1);
     //取蓝牙地址-用来生成二维码
     STMFLASH_Read(BLE_ADRESS , (uint16_t *)eeprom_Ble_addr, MAC_LENGTH/2+1);//先读一次
@@ -306,6 +243,77 @@ void GetSystemInfo()
             }
 
             osDelay(5);
+        }
+    }
+}
+void CheckPassWord()
+{
+    static uint8_t *temppass;
+    static uint8_t *tempval;
+    STMFLASH_Read(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+    STMFLASH_Read(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
+    datatemp[0] = datatemp[0]+1;
+    temppass = GetPassWord(Get_ChipID(),TESTLEN);//计算密码
+
+    //STMFLASH_Write(PASS_ADRESS,(uint16_t *)temppass,TESTLEN);   //调试时写密码到内存用
+    if(passres[0]!=1)               //判断是否通过密码检测，通过passres[0]=1
+    {
+        HMI_SetPage(HMI_UART,0);
+        osDelay(20);
+        HMI_SetPage(HMI_UART,0);
+        HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);
+        osDelay(WAITTIM);
+    }
+    while(1)
+    {
+        if(datatemp[0]<TEST_USECOUNT){
+            osDelay(100);
+            STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+            Uart_printf(&huart1,"System Run Count%d",datatemp[0]);
+
+            break;
+        }
+        else{
+            STMFLASH_Read(PASS_ADRESS,(uint16_t *)eeprom_pass,TESTLEN/2);
+            if(arrcamp(temppass,eeprom_pass,TESTLEN)==0)                             //判断密码是否正确
+            {
+                Uart_printf(&huart1,"The Same to EEPROM\r\n");
+                datatemp[0] = 0;
+                passres[0] =1;
+                STMFLASH_Write(PASS_RIGHT_ADRESS,(uint16_t *)passres,1);
+                STMFLASH_Write(EEPROM_BEGIN_ADRR,(uint16_t *)datatemp,1);
+                break;
+            }
+            else{
+
+                /*    HMI_SetPage(HMI_UART,0);
+                    osDelay(50);
+                    HMI_SetVal_n(HMI_UART,12,10-datatemp[0]);*/
+                tempval = Get_ChipID();
+                for (int i = 0; i < 12; ++i) {
+                    HMI_SetVal_n(HMI_UART,i,tempval[i]);   //发送MCU的ID号到HMI
+                }
+                //接收密码用
+                while(1)
+                {
+                    if(uart2_rec.reover==1)
+                    {
+                        uart2_rec.reover = 0;
+                        Uart_printf(&huart1,uart2_rec.redata); //等待蓝牙信息
+                        STMFLASH_Write(PASS_ADRESS,(uint16_t *)uart2_rec.redata,TESTLEN);
+                        Uart_printf(BLE_UART,"Upgrade success");
+                        NVIC_SystemReset();//系统复位
+
+                    } else{
+                        //Uart_printf(&huart1,"Wait the Message of BLE....."); //等待蓝牙信息
+                        Uart_printf(HMI_UART,"g0.en=1");//蓝牙等带提示语
+                        HMI_SendEnd(HMI_UART);
+                        // Uart_printf(BLE_UART,"Testxiaoweng\r\n");
+                        osDelay(1000);
+                    }
+
+                }
+            }
         }
     }
 }
