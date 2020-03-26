@@ -149,7 +149,7 @@ void MessageHandler(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
   /* Infinite loop */
-  for(;;)                     //testtest
+  for(;;)                     //testtestyyyyyyyyyyyyyyyy
   {
      // Uart_printf(&huart1,"Data:%d\r\n",datatemp[0]);
       //Uart_printf(&huart1,"eeprompass:%s",eeprom_pass);
