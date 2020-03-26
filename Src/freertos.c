@@ -186,7 +186,6 @@ void StartTask03(void const * argument)
 }
 void GetBleInfo()
 {
-
     HMI_SetPage(HMI_UART,1);
     //取蓝牙地址-用来生成二维码
     STMFLASH_Read(BLE_ADRESS , (uint16_t *)eeprom_Ble_addr, MAC_LENGTH/2+1);//先读一次
@@ -206,7 +205,6 @@ void GetBleInfo()
         // MY_USART_chars(BLE_UART, "AT+ENTM\r\n");
         while (1)
         {
-
             if (uart2_rec.reover == 1)
             {
                 recount++;
